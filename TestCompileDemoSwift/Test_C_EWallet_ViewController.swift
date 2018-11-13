@@ -159,8 +159,6 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     var progressCallback: tFunc_Progress_Callback = {
-        let var1 = $0
-        let var2 = $1
         guard let selfClass = ewalletClass else {
             return Int32(bitPattern: PAEW_RET_DEV_OP_CANCEL)
         }
