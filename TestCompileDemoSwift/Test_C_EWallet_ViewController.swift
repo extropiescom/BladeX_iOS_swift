@@ -903,6 +903,7 @@ class Test_C_EWallet_ViewController: UIViewController {
                 self.printLog("PAEW_FreeContext returns failed: %@", Utils.errorCodeToString(iRtn))
                 return
             }
+            self.deviceContext = nil
             self.printLog("PAEW_FreeContext returns success")
         }
     }
@@ -976,6 +977,10 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     @IBAction func updateCOSBtnAction (sender: UIButton) {
+        let bRestart = PickerViewAlert.doModal(parent: self, title: "Please select update type", dataSource: ["Resume", "Restart"])
+        guard bRestart >= 0 else {
+            return
+        }
         DispatchQueue.global(qos: .default).async {
             let devIdx = 0
             guard let pPAEWContext = self.deviceContext else {
@@ -1007,12 +1012,10 @@ class Test_C_EWallet_ViewController: UIViewController {
             self.printLog("ready to call PAEW_UpdateCOS_Ex")
             self.updateProgress = 0
             let starttime = Date.init()
-            iRtn = PAEW_UpdateCOS_Ex(pPAEWContext, devIdx, 0, dataPtr, data.count, self.progressCallback, nil)
+            iRtn = PAEW_UpdateCOS_Ex(pPAEWContext, devIdx, UInt8(bRestart), dataPtr, data.count, self.progressCallback, nil)
             let endtime = Date.init()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             let timeNumber = Int(endtime.timeIntervalSince1970 - starttime.timeIntervalSince1970)
-            self.printLog("PAEW_UpdateCOS_Ex costs \(timeNumber) senconds", Utils.errorCodeToString(iRtn))
+            self.printLog("PAEW_UpdateCOS_Ex costs \(timeNumber) senconds")
             guard iRtn == PAEW_RET_SUCCESS else {
                 self.printLog("PAEW_UpdateCOS_Ex returns failed: %@", Utils.errorCodeToString(iRtn))
                 return
