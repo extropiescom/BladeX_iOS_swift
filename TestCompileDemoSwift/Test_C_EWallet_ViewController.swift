@@ -905,6 +905,9 @@ class Test_C_EWallet_ViewController: UIViewController {
             }
             self.deviceContext = nil
             self.printLog("PAEW_FreeContext returns success")
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+            }
         }
     }
     
@@ -939,6 +942,8 @@ class Test_C_EWallet_ViewController: UIViewController {
                 return
             }
             self.printLog("PAEW_PowerOff returns success")
+            //it will be a good practice to call freecontext after poweroff
+            self.freeContextBtnAction(sender: self.freeContextBtn)
         }
     }
     
@@ -1006,6 +1011,8 @@ class Test_C_EWallet_ViewController: UIViewController {
             var iRtn = PAEW_ClearCOS(pPAEWContext, devIdx)
             if iRtn == PAEW_RET_SUCCESS {
                 self.printLog("PAEW_ClearCOS returns success")
+                //MUST sleep at least 5 seconds after clearcos succeeded
+                Thread.sleep(forTimeInterval: 5.000)
             } else {
                 self.printLog("PAEW_ClearCOS returns failed: %@", Utils.errorCodeToString(iRtn))
             }
@@ -1021,6 +1028,10 @@ class Test_C_EWallet_ViewController: UIViewController {
                 return
             }
             self.printLog("PAEW_UpdateCOS_Ex returns success")
+            //MUST sleep at least 5 seconds after updatecos succeeded
+            Thread.sleep(forTimeInterval: 5.000)
+            //MUST reconnect after update complete
+            self.freeContextBtnAction(sender: self.freeContextBtn)
         }
     }
     
@@ -1060,6 +1071,7 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     @IBAction func enrollFPBtnAction(sender: UIButton) {
+        self.abortBtnState = false
         DispatchQueue.global(qos: .default).async {
             let devIdx = 0
             guard let pPAEWContext = self.deviceContext else {
@@ -1077,8 +1089,8 @@ class Test_C_EWallet_ViewController: UIViewController {
                 iRtn = CUnsignedInt(bitPattern: PAEW_GetFPState(pPAEWContext, devIdx))
                 if lastRtn != iRtn {
                     self.printLog("fpstate: \(Utils.errorCodeToString(iRtn))")
+                    lastRtn = iRtn
                 }
-                lastRtn = iRtn
                 if self.abortBtnState {
                     self.abortCondition.lock()
                     self.abortHandelBlock!(true)
@@ -1098,6 +1110,7 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     @IBAction func verifyFPBtnAction(sender: UIButton) {
+        self.abortBtnState = false
         DispatchQueue.global(qos: .default).async {
             self.printLog("ready to call PAEW_VerifyFP")
             let devIdx = 0
@@ -1116,6 +1129,13 @@ class Test_C_EWallet_ViewController: UIViewController {
                 if lastRtn != iRtn {
                     self.printLog("\(Utils.errorCodeToString(iRtn))")
                     lastRtn = iRtn
+                }
+                if self.abortBtnState {
+                    self.abortCondition.lock()
+                    self.abortHandelBlock!(true)
+                    self.abortCondition.wait()
+                    self.abortCondition.unlock()
+                    self.abortBtnState = false
                 }
             } while (lastRtn == PAEW_RET_DEV_WAITING)
             guard iRtn == PAEW_RET_SUCCESS else {
@@ -1480,6 +1500,7 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     @IBAction func ethSignBtnAction(sender: UIButton) {
+        self.abortBtnState = false
         var rtn = self.getAuthType()
         guard rtn == PAEW_RET_SUCCESS else {
             self.printLog("user canceled PAEW_EOS_TXSign_Ex")
@@ -1527,15 +1548,16 @@ class Test_C_EWallet_ViewController: UIViewController {
             self.lastSignState = PAEW_RET_SUCCESS
             iRtn = PAEW_ETH_TXSign_Ex(pPAEWContext, devIdx, transaction, transaction.count, sigPtr, &sigLen, &callback, nil)
             guard iRtn == PAEW_RET_SUCCESS else {
-                self.printLog("PAEW_EOS_TXSign_Ex returns failed: \(Utils.errorCodeToString(iRtn))")
+                self.printLog("PAEW_ETH_TXSign_Ex returns failed: \(Utils.errorCodeToString(iRtn))")
                 return
             }
-            self.printLog("EOS signature is: \(Utils.bytesToHexString(data: sigPtr, length: sigLen))")
-            self.printLog("PAEW_EOS_TXSign_Ex returns success")
+            self.printLog("ETH signature is: \(Utils.bytesToHexString(data: sigPtr, length: sigLen))")
+            self.printLog("PAEW_ETH_TXSign_Ex returns success")
         }
     }
     
     @IBAction func eosSignBtnAction(sender: UIButton) {
+        self.abortBtnState = false
         var rtn = self.getAuthType()
         guard rtn == PAEW_RET_SUCCESS else {
             self.printLog("user canceled PAEW_EOS_TXSign_Ex")
@@ -1613,6 +1635,7 @@ class Test_C_EWallet_ViewController: UIViewController {
     }
     
     @IBAction func cybSignBtnAction(sender: UIButton) {
+        self.abortBtnState = false
         var rtn = self.getAuthType()
         guard rtn == PAEW_RET_SUCCESS else {
             self.printLog("user canceled PAEW_CYB_TXSign_Ex")
@@ -1924,13 +1947,14 @@ class Test_C_EWallet_ViewController: UIViewController {
     func printLog(_ format: String, _ args: CVarArg...) {
         logCounter += 1;
         let str:String = String.init(format: format, arguments: args)
+        let log = String.init(format: "[%zu]%@\n", logCounter, str)
         
         if Thread.isMainThread {
-            self.in_outTextView.text.append(String.init(format: "[%zu]%@\n", logCounter, str))
+            self.in_outTextView.text.append(log)
             self.in_outTextView.scrollRangeToVisible(NSRange.init(location: self.in_outTextView.text.count, length: 1))
         } else {
             DispatchQueue.main.async {
-                self.in_outTextView.text.append(String.init(format: "[%zu]%@\n", self.logCounter, str))
+                self.in_outTextView.text.append(log)
                 self.in_outTextView.scrollRangeToVisible(NSRange.init(location: self.in_outTextView.text.count, length: 1))
             }
         }
