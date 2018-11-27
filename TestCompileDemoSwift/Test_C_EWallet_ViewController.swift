@@ -1240,7 +1240,7 @@ class Test_C_EWallet_ViewController: UIViewController {
                 return ptr
             })
             self.printLog("ready to call PAEW_GenerateSeed_GetMnes")
-            let iRtn = PAEW_GenerateSeed_GetMnes(pPAEWContext, devIdx, seedLen, mnePtr, &mneLen, checkIndexPtr, &checkIndexCount)
+            var iRtn = PAEW_GenerateSeed_GetMnes(pPAEWContext, devIdx, seedLen, mnePtr, &mneLen, checkIndexPtr, &checkIndexCount)
             guard iRtn == PAEW_RET_SUCCESS else {
                 self.printLog("PAEW_GenerateSeed_GetMnes returns failed: \(Utils.errorCodeToString(iRtn))")
                 return
@@ -1272,35 +1272,28 @@ class Test_C_EWallet_ViewController: UIViewController {
             }
             self.printLog("please input the words exactly as this sequence with ONE WHITESPACE between each words: \(examWords)")
             
-            DispatchQueue.main.async {
-                self.inputtingView = ToolInputView.toolInputViewWithCallback(callback: { (str: String) in
-                    self.inputtingView = nil
-                    self.examResult = str
-                    DispatchQueue.global(qos: .default).async {
-                        let words = self.examResult.trimmingCharacters(in: CharacterSet.whitespaces)
-                        guard words.count > 0 else {
-                            self.printLog("invalid exam words: \(str)")
-                            return
-                        }
-                        var wordsCString = words.cString(using: String.Encoding.utf8)
-                        let wordsPtr = wordsCString?.withUnsafeMutableBytes({ (ptr: UnsafeMutableRawBufferPointer) -> UnsafeMutablePointer<byte> in
-                            return ptr.bindMemory(to: byte.self).baseAddress!
-                        })
-                        let devIdx = 0
-                        guard let pPAEWContext = self.deviceContext else {
-                            self.printLog("Deivce not connected, connect to device first")
-                            return
-                        }
-                        self.printLog("ready to call PAEW_GenerateSeed_CheckMnes")
-                        let iRtn = PAEW_GenerateSeed_CheckMnes(pPAEWContext, devIdx, wordsPtr, words.count);
-                        guard iRtn == PAEW_RET_SUCCESS else {
-                            self.printLog("PAEW_GenerateSeed_CheckMnes returns failed: \(Utils.errorCodeToString(iRtn))")
-                            return
-                        }
-                        self.printLog("PAEW_GenerateSeed_CheckMnes returns success")
-                    }
-                })
+            var inputWords = ""
+            for i in 0..<checkIndexCount {
+                inputWords.append(singleWords[checkIndexPtr.advanced(by: i).pointee]);
+                if i != checkIndexCount - 1 {
+                    inputWords.append(" ")
+                }
             }
+            
+            self.printLog("words to input are: \(inputWords)")
+            
+            var wordsCString = inputWords.cString(using: String.Encoding.utf8)
+            let wordsPtr = wordsCString?.withUnsafeMutableBytes({ (ptr: UnsafeMutableRawBufferPointer) -> UnsafeMutablePointer<byte> in
+                return ptr.bindMemory(to: byte.self).baseAddress!
+            })
+
+            self.printLog("ready to call PAEW_GenerateSeed_CheckMnes")
+            iRtn = PAEW_GenerateSeed_CheckMnes(pPAEWContext, devIdx, wordsPtr, inputWords.count);
+            guard iRtn == PAEW_RET_SUCCESS else {
+                self.printLog("PAEW_GenerateSeed_CheckMnes returns failed: \(Utils.errorCodeToString(iRtn))")
+                return
+            }
+            self.printLog("PAEW_GenerateSeed_CheckMnes returns success")
         }
     }
     
