@@ -767,40 +767,6 @@ class Test_C_EWallet_ViewController: UIViewController {
         }
     }
     
-    @IBAction func writeSNBtnAction (sender: UIButton) {
-        let result = TextFieldViewAlert.doModal(parent: self, title: "Please input SN", message: "Please input SN", isPassword: false, minLengtRequired: 10, maxLengtRequired: 16, keyBoardType: .numberPad)
-        guard let sn = result else {
-            self.printLog("Invalid SN input")
-            return
-        }
-        
-        for c in sn {
-            guard ((c >= "0" && c <= "9") || (c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) else {
-                self.printLog("Invalid SN input")
-                return
-            }
-        }
-        
-        DispatchQueue.global(qos: .default).async {
-            let devIdx = 0
-            guard let pPAEWContext = self.deviceContext else {
-                self.printLog("Deivce not connected, connect to device first")
-                return
-            }
-            var bytes: [CChar] = sn.cString(using: String.Encoding.utf8)!
-            let count = sn.count
-            var buffer = Array<byte>.init(repeating: 0, count: Int(PAEW_DEV_INFO_SN_LEN))
-            memcpy(&buffer, &bytes, count)
-            self.printLog("ready to call PAEW_WriteSN")
-            let iRtn = PAEW_WriteSN(pPAEWContext, devIdx, buffer, Int(PAEW_DEV_INFO_SN_LEN))
-            guard iRtn == PAEW_RET_SUCCESS else {
-                self.printLog("PAEW_WriteSN returns failed: %@", Utils.errorCodeToString(iRtn))
-                return
-            }
-            self.printLog("PAEW_WriteSN returns success")
-        }
-    }
-    
     /*
      // MARK: - Fingerprint actions
      */
@@ -1133,32 +1099,6 @@ class Test_C_EWallet_ViewController: UIViewController {
             }
             let address = String.init(cString: addressPtr)
             self.printLog("PAEW_GetTradeAddress on coin EOS returns success, address is \(address)")
-        }
-    }
-    
-    @IBAction func getDeviceCheckCodeAction(sender: UIButton) {
-        DispatchQueue.global(qos: .default).async {
-            guard let pPAEWContext = self.deviceContext else {
-                self.printLog("Deivce not connected, connect to device first")
-                return
-            }
-            let devIdx = 0
-            
-            var checkCodeLen: size_t = 1024;
-            
-            var checkCodeData = Data.init(count: checkCodeLen)
-            let checkCodePtr = checkCodeData.withUnsafeMutableBytes({ (ptr: UnsafeMutablePointer<byte>) -> UnsafeMutablePointer<byte> in
-                return ptr
-            })
-            
-            self.printLog("ready to call PAEW_GetDeviceCheckCode")
-            let iRtn = PAEW_GetDeviceCheckCode(pPAEWContext, devIdx, checkCodePtr, &checkCodeLen)
-            guard iRtn == PAEW_RET_SUCCESS else {
-                self.printLog("PAEW_GetDeviceCheckCode returns failed: \(Utils.errorCodeToString(iRtn))")
-                return
-            }
-            self.printLog("DeviceCheckCode is: \(Utils.bytesToHexString(data: checkCodePtr, length: checkCodeLen))")
-            self.printLog("PAEW_GetDeviceCheckCode returns success")
         }
     }
     
