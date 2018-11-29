@@ -334,6 +334,33 @@ class Utils: NSObject {
         return szRet;
     }
     
+    class func ewallet_pinstate2string(_ ucPINState: CUnsignedChar) -> String {
+        var szRet = "";
+        
+        switch (CInt(ucPINState))
+        {
+        case PAEW_DEV_INFO_PIN_INVALID_STATE:
+            szRet = "invalid";
+            break;
+        case PAEW_DEV_INFO_PIN_LOGOUT:
+            szRet = "logout";
+            break;
+        case PAEW_DEV_INFO_PIN_LOGIN:
+            szRet = "login";
+            break;
+        case PAEW_DEV_INFO_PIN_LOCKED:
+            szRet = "locked";
+            break;
+        case PAEW_DEV_INFO_PIN_UNSET:
+            szRet = "unset";
+            break;
+        default:
+            szRet = "unknown";
+            break;
+        } 
+        return szRet;
+    }
+    
     class func bytesToHexString(data: Data) -> String {
         let length: size_t = data.count;
         return bytesToHexString(data: data, length: length)

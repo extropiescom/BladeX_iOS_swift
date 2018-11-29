@@ -33,7 +33,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //battery callback for connected device
     var batteryCallback:tFunc_BatteryCallback = {
         let str = String.init(format: "power source: %@, battery level: 0x%02X", $0 == 0 ? "USB" : "Battery", $1)
-        ViewController.printLog("batteryCallback::: ", str)
+        ViewController.printLog("batteryCallback::: \(str)")
         return PAEW_RET_SUCCESS
     }
     
