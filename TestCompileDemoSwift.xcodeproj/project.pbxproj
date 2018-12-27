@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3712627BF67C0D10CFF882A5 /* Pods_TestCompileDemoSwiftUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50A33EEFED1CE1BC00680402 /* Pods_TestCompileDemoSwiftUITests.framework */; };
+		3E13056321D5326700B08545 /* logo in Resources */ = {isa = PBXBuildFile; fileRef = 3E13056221D5326700B08545 /* logo */; };
 		3E20C086218AAB1200FAF8FB /* ToolCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E20C085218AAB1200FAF8FB /* ToolCellModel.swift */; };
 		3E20C088218AB69100FAF8FB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E20C087218AB69100FAF8FB /* Utils.swift */; };
 		3E20C08E218AFA1800FAF8FB /* iOS_EWalletDynamic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E3D7BDB2186DDE40068F5F0 /* iOS_EWalletDynamic.framework */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		3D0E3EBD0110ADB869DFE7D4 /* Pods-TestCompileDemoSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestCompileDemoSwiftUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TestCompileDemoSwiftUITests/Pods-TestCompileDemoSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
+		3E13056221D5326700B08545 /* logo */ = {isa = PBXFileReference; lastKnownFileType = folder; path = logo; sourceTree = "<group>"; };
 		3E20C085218AAB1200FAF8FB /* ToolCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolCellModel.swift; sourceTree = "<group>"; };
 		3E20C087218AB69100FAF8FB /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		3E20C099218BE80C00FAF8FB /* ToolCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolCell.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 		3E3D7BBA2186DD700068F5F0 /* TestCompileDemoSwift */ = {
 			isa = PBXGroup;
 			children = (
+				3E13056221D5326700B08545 /* logo */,
 				3E20C089218AF88000FAF8FB /* PA_EWallet */,
 				3E2A2894218A9D930019A928 /* VCCell */,
 				3E3D7BBB2186DD700068F5F0 /* AppDelegate.swift */,
@@ -275,6 +278,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E13056321D5326700B08545 /* logo in Resources */,
 				3E3D7BC62186DD740068F5F0 /* LaunchScreen.storyboard in Resources */,
 				3E3D7BC32186DD740068F5F0 /* Assets.xcassets in Resources */,
 				3E3D7BC12186DD700068F5F0 /* Main.storyboard in Resources */,
@@ -530,6 +534,7 @@
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T9DGSP4THT;
 				ENABLE_BITCODE = NO;
@@ -546,6 +551,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.extropies.TestCompileDemoSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestCompileDemoSwift/TestCompileDemoSwift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -565,6 +571,7 @@
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T9DGSP4THT;
 				ENABLE_BITCODE = NO;
@@ -581,6 +588,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.extropies.TestCompileDemoSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestCompileDemoSwift/TestCompileDemoSwift-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

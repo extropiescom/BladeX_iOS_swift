@@ -53,7 +53,13 @@ class TextFieldViewAlert: NSObject {
         view.secureTextAlertAction = otherAction
         alertController.addAction(cancelAction)
         alertController.addAction(otherAction)
-        parent.present(alertController, animated: true, completion: nil)
+        if Thread.isMainThread {
+            parent.present(alertController, animated: true, completion: nil)
+        } else {
+            DispatchQueue.main.sync {
+                parent.present(alertController, animated: true, completion: nil)
+            }
+        }
         while !(view.buttonPressed) {
             CFRunLoopRun()
         }

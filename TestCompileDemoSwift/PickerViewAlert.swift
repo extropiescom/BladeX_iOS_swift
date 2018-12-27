@@ -44,7 +44,13 @@ class PickerViewAlert: NSObject, UIPickerViewDelegate, UIPickerViewDataSource {
         view.picker.dataSource = view
         sheet.view.addSubview(view.picker)
         view.picker.selectRow(0, inComponent: 0, animated: true)
-        parent.present(sheet, animated: true, completion: nil)
+        if Thread.isMainThread {
+            parent.present(sheet, animated: true, completion: nil)
+        } else {
+            DispatchQueue.main.sync {
+                parent.present(sheet, animated: true, completion: nil)
+            }
+        }
         while !(view.buttonPressed) {
             CFRunLoopRun()
         }

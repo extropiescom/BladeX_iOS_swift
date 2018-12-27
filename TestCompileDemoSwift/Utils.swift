@@ -191,147 +191,23 @@ class Utils: NSObject {
         case PAEW_RET_DEV_TYPE_INVALID:
             strResult="device type invalid";
             break;
+        case PAEW_RET_NO_VERIFY_COUNT:
+            strResult="no verify count";
+            break;
+        case PAEW_RET_AUTH_CANCEL:
+            strResult="auth cancelled";
+            break;
+        case PAEW_RET_PIN_LEN_ERROR:
+            strResult="pin length error";
+            break;
+        case PAEW_RET_AUTH_TYPE_INVALID:
+            strResult="auth type invalid";
+            break;
         default:
             strResult = "unknown error type";
             break;
         }
         return strResult;
-    }
-    
-    class func ewallet_step2string(_ step: process_step) -> String {
-        var szRet = "";
-        
-        switch (step) {
-        case pstep_invalid:
-            szRet = "invalid";
-            break;
-        case pstep_comm_enum_dev:
-            szRet = "comm_enum_dev";
-            break;
-        case pstep_comm_open_dev:
-            szRet = "comm_open_dev";
-            break;
-        case pstep_comm_close_dev:
-            szRet = "comm_close_dev";
-            break;
-        case pstep_comm_get_devinfo:
-            szRet = "comm_get_devinfo";
-            break;
-        case pstep_comm_dev_select:
-            szRet = "comm_dev_select";
-            break;
-        case pstep_init_seed_gen:
-            szRet = "init_seed_gen";
-            break;
-        case pstep_init_mne_show:
-            szRet = "init_mne_show";
-            break;
-        case pstep_init_mne_confirm:
-            szRet = "init_mne_confirm";
-            break;
-        case pstep_init_seed_import:
-            szRet = "init_seed_import";
-            break;
-        case pstep_init_keypair_gen:
-            szRet = "init_keypair_gen";
-            break;
-        case pstep_init_key_agree_init:
-            szRet = "init_key_agree_init";
-            break;
-        case pstep_init_key_agree_update:
-            szRet = "init_key_agree_update";
-            break;
-        case pstep_init_key_agree_final:
-            szRet = "init_key_agree_final";
-            break;
-        case pstep_init_key_agree_show:
-            szRet = "init_key_agree_show";
-            break;
-        case pstep_init_key_agree_confirm:
-            szRet = "init_key_agree_confirm";
-            break;
-        case pstep_init_shamir_transmit_init:
-            szRet = "init_shamir_transmit_init";
-            break;
-        case pstep_init_shamir_export:
-            szRet = "init_shamir_export";
-            break;
-        case pstep_init_shamir_import:
-            szRet = "init_shamir_import";
-            break;
-        case pstep_init_shamir_confirm:
-            szRet = "init_shamir_confirm";
-            break;
-        case pstep_comm_addr_gen:
-            szRet = "comm_addr_gen";
-            break;
-        case pstep_comm_shamir_transmit_init:
-            szRet = "comm_shamir_transmit_init";
-            break;
-        case pstep_comm_shamir_export:
-            szRet = "comm_shamir_export";
-            break;
-        case pstep_comm_shamir_import:
-            szRet = "comm_shamir_import";
-            break;
-        case pstep_comm_addr_get:
-            szRet = "comm_addr_get";
-            break;
-        case pstep_comm_addr_confirm:
-            szRet = "comm_addr_confirm";
-            break;
-        case pstep_comm_format:
-            szRet = "comm_format";
-            break;
-        case pstep_comm_format_confirm:
-            szRet = "comm_format_confirm";
-            break;
-        case pstep_sig_output_data:
-            szRet = "sig_output_data";
-            break;
-        case pstep_sig_confirm:
-            szRet = "sig_confirm";
-            break;
-        case pstep_comm_clearcos:
-            szRet = "comm_clearcos";
-            break;
-        case pstep_comm_clearcos_confirm:
-            szRet = "comm_clearcos_confirm";
-            break;
-        case pstep_comm_updatecos:
-            szRet = "comm_updatecos";
-            break;
-        case pstep_comm_changepin:
-            szRet = "comm_changepin";
-            break;
-        case pstep_comm_changepin_confirm:
-            szRet = "comm_changepin_confirm";
-            break;
-        default:
-            szRet = "unknown";
-            break;
-        }
-        return szRet;
-    }
-    
-    class func ewallet_status2string(_ status: process_status) -> String {
-        var szRet = "";
-        
-        switch (status) {
-        case pstatus_invalid:
-            szRet = "invalid";
-            break;
-        case pstatus_start:
-            szRet = "start";
-            break;
-        case pstatus_finish:
-            szRet = "finish";
-            break;
-        default:
-            szRet = "unknown";
-            break;
-        }
-        return szRet;
     }
     
     class func bytesToHexString(data: Data) -> String {
@@ -355,6 +231,16 @@ class Utils: NSObject {
             result.appendFormat("%02X", data.advanced(by: i).pointee)
         }
         return result as String
+    }
+    
+    class func bytesToHexString(data: [byte]) -> String {
+        let hexData = Data.init(bytes: data)
+        return bytesToHexString(data: hexData)
+    }
+    
+    class func bytesToHexString(data: [byte], length: size_t) -> String {
+        let hexData = Data.init(bytes: data[0..<length])
+        return bytesToHexString(data: hexData)
     }
     
     class func hexStringToBytes(hexString: String) -> Data? {

@@ -15,7 +15,6 @@ var vcClass:ViewController? = nil
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    static var cbParam = callback_param.init()
     
     //callback for EnumContext
     var enumCallback:tFunc_EnumCallback = {
@@ -41,17 +40,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var disconnectCallback:tFunc_DisconnectedCallback = {
         let str = String.init(format: "disconnect error code: %d, description: %s", $0, $1!)
         ViewController.printLog("disconnectCallback::: ", str)
-        return PAEW_RET_SUCCESS
-    }
-    
-    var procCallback: tFunc_Proc_Callback = {
-        let param: callback_param = $0!.pointee
-        printLog("tFunc_Proc_Callback")
-        printLog("dev_count: \(param.dev_count)")
-        printLog("dev_index: \(param.dev_index)")
-        printLog("pstatus: \(Utils.ewallet_status2string(param.pstatus))")
-        printLog("pstep: \(Utils.ewallet_step2string(param.pstep))")
-        printLog("ret_value: \(param.ret_value)")
         return PAEW_RET_SUCCESS
     }
     
@@ -274,8 +262,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //size of enumContext
             let ctxSize = MemoryLayout.size(ofValue: connectContext);
             
-            //currently the last two parameters may be nil (NULL in C)
-            let rtn = PAEW_InitContextWithDevNameAndDevContext(&self.pPAEWContext, devNamePtr, devType, &connectContext, ctxSize, self.procCallback, &ViewController.cbParam)
+            let rtn = PAEW_InitContextWithDevNameAndDevContext(&self.pPAEWContext, devNamePtr, devType, &connectContext, ctxSize)
             guard rtn == PAEW_RET_SUCCESS else{
                 ViewController.printLog("PAEW_InitContextWithDevNameAndDevContext failed: %@", Utils.errorCodeToString(rtn))
                 return
